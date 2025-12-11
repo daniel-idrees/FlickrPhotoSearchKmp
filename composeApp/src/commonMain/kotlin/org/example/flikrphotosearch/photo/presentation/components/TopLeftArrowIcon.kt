@@ -1,0 +1,20 @@
+package org.example.flikrphotosearch.photo.presentation.components
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+
+
+@Composable
+internal fun TopLeftArrowIcon(modifier: Modifier) {
+    Icon(
+        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+        contentDescription = "Top-left arrow icon",
+        modifier = modifier.graphicsLayer {
+            rotationZ = 45f
+        }
+    )
+}
