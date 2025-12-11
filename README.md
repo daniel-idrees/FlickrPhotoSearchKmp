@@ -1,4 +1,25 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM) that has an image search function which enables users to search images and keep a track of runtime searches.
+
+This project serves as a KMP playground to explore Compose Multiplatform (CMP), shared ViewModels, and multi-platform UI development.
+
+#### Features
+
+Search Functionality – Users enter a query, and the app fetches related images.
+Search History – A list of previous searches is maintained during the app's runtime. User can also delete the search history.
+Image Display – The app shows search results in a scrollable list.
+State Management – Search history may reset when the app is restarted
+
+#### Data Source
+
+The App uses [Flickr API](https://www.flickr.com/services/api/flickr.photos.search.html) to retrieve photos and relatable information
+
+#### API key
+
+Ensure that your project's ```local.properties``` file contains the Flickr API key, like this:
+
+```API_KEY="your_api_key_here"```
+
+
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
