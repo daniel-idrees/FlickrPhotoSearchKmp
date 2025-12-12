@@ -13,7 +13,6 @@ class KtorRemotePhotoDataSource(
     private val client: HttpClient,
 ) : RemotePhotoDataSource {
     private val baseUrl: String = "https://api.flickr.com/"
-    private val apiKey = "37ad288835e4c64fc0cb8af3f3a1a65d"
 
     override suspend fun getPhotos(searchText: String): Result<PhotoSearchResponseDto, DataError.Remote> {
         return safeCall<PhotoSearchResponseDto> {
@@ -21,7 +20,7 @@ class KtorRemotePhotoDataSource(
                 url {
                     parameters.append("text", searchText)
                     parameters.append("method", "flickr.photos.search")
-                    parameters.append("api_key", apiKey)
+                    parameters.append("api_key", ApiKeys.API_KEY)
                     parameters.append("format", "json")
                     parameters.append("nojsoncallback", "1")
                     parameters.append("safe_search", "1")
