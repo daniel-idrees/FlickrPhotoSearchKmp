@@ -23,7 +23,7 @@ import org.example.flikrphotosearch.core.presentation.SPACING_MEDIUM
 import org.example.flikrphotosearch.core.presentation.content.ContentScreen
 import org.example.flikrphotosearch.core.presentation.content.ContentTitle
 import org.example.flikrphotosearch.photo.domain.Photo
-import org.example.flikrphotosearch.photo.presentation.MainUiEvent
+import org.example.flikrphotosearch.photo.presentation.MainUiAction
 import org.example.flikrphotosearch.photo.presentation.MainUiState
 import org.example.flikrphotosearch.photo.presentation.MainViewModel
 import org.example.flikrphotosearch.photo.presentation.components.SearchHistoryListView
@@ -41,7 +41,7 @@ internal fun SearchHistoryScreen(viewModel: MainViewModel) {
     ) { paddingValues ->
         Content(
             searchHistory = viewState.searchHistory,
-            onEventSend = { viewModel.setEvent(it) },
+            onEventSend = { viewModel.setAction(it) },
             paddingValues = paddingValues
         )
     }
@@ -50,7 +50,7 @@ internal fun SearchHistoryScreen(viewModel: MainViewModel) {
 @Composable
 private fun Content(
     searchHistory: List<String>,
-    onEventSend: (MainUiEvent) -> Unit,
+    onEventSend: (MainUiAction) -> Unit,
     paddingValues: PaddingValues,
 ) {
     Column(

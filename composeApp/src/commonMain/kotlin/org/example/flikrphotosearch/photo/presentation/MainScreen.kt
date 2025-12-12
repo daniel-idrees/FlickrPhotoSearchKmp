@@ -18,11 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.example.flikrphotosearch.app.config.BottomBarScreen
 import org.example.flikrphotosearch.photo.presentation.home.HomeScreen
 import org.example.flikrphotosearch.photo.presentation.search.SearchScreen
@@ -35,6 +40,42 @@ fun MainScreen() {
     val bottomNavigationController = rememberNavController()
 
     val viewModel = koinViewModel<MainViewModel>()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            withContext(Dispatchers.Main.immediate) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        is MainUiEffect.Navigation.SwitchScreen -> bottomNavigationController.navigate(
+                            effect.toScreen.route
+                        ) {
+                            bottomNavigationController.graph.startDestinationRoute?.let {
+                                popUpTo(it)
+                            }
+                            launchSingleTop = true
+                        }
+
+                        is MainUiEffect.Navigation.Pop -> {
+                            when (effect.fromScreen) {
+
+                                BottomBarScreen.Search, BottomBarScreen.History -> bottomNavigationController.navigate(
+                                    BottomBarScreen.Home.route
+                                ) {
+                                    bottomNavigationController.graph.startDestinationRoute?.let {
+                                        popUpTo(it)
+                                    }
+                                    launchSingleTop = true
+                                }
+
+                                BottomBarScreen.Home -> bottomNavigationController.navigateUp()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -92,37 +133,6 @@ fun MainScreen() {
                     SearchHistoryScreen(
                         viewModel = viewModel
                     )
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is MainUiEffect.Navigation.SwitchScreen -> bottomNavigationController.navigate(
-                    effect.toScreen.route
-                ) {
-                    bottomNavigationController.graph.startDestinationRoute?.let {
-                        popUpTo(it)
-                    }
-                    launchSingleTop = true
-                }
-
-                is MainUiEffect.Navigation.Pop -> {
-                    when (effect.fromScreen) {
-
-                        BottomBarScreen.Search, BottomBarScreen.History -> bottomNavigationController.navigate(
-                            BottomBarScreen.Home.route
-                        ) {
-                            bottomNavigationController.graph.startDestinationRoute?.let {
-                                popUpTo(it)
-                            }
-                            launchSingleTop = true
-                        }
-
-                        BottomBarScreen.Home -> bottomNavigationController.navigateUp()
-                    }
                 }
             }
         }

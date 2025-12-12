@@ -24,7 +24,7 @@ import org.example.flikrphotosearch.core.presentation.SPACING_LARGE
 import org.example.flikrphotosearch.core.presentation.content.ContentScreen
 import org.example.flikrphotosearch.core.presentation.content.ContentTitle
 import org.example.flikrphotosearch.photo.domain.Photo
-import org.example.flikrphotosearch.photo.presentation.MainUiEvent
+import org.example.flikrphotosearch.photo.presentation.MainUiAction
 import org.example.flikrphotosearch.photo.presentation.MainUiState
 import org.example.flikrphotosearch.photo.presentation.MainViewModel
 import org.example.flikrphotosearch.photo.presentation.components.SearchFieldView
@@ -46,7 +46,7 @@ internal fun HomeScreen(
             searchQuery = viewState.searchQuery,
             searchHistory = viewState.searchHistory,
             hasError = viewState.error != null,
-            onEventSend = { viewModel.setEvent(it) },
+            onEventSend = { viewModel.setAction(it) },
             paddingValues = paddingValues,
         )
     }
@@ -57,7 +57,7 @@ private fun Content(
     searchQuery: String,
     searchHistory: List<String>,
     hasError: Boolean,
-    onEventSend: (MainUiEvent) -> Unit,
+    onEventSend: (MainUiAction) -> Unit,
     paddingValues: PaddingValues,
 ) {
     Column(
@@ -89,7 +89,7 @@ private fun Content(
             searchErrorReceived = hasError,
             doOnSearchRequest = { text ->
                 onEventSend(
-                    MainUiEvent.RequestSearch(
+                    MainUiAction.RequestSearch(
                         searchQuery = text,
                         BottomBarScreen.Home
                     )
@@ -97,15 +97,15 @@ private fun Content(
             },
             doOnSearchHistoryDropDownItemClick = { text ->
                 onEventSend(
-                    MainUiEvent.OnSearchHistoryItemSelected(
+                    MainUiAction.OnSearchHistoryItemSelected(
                         searchQuery = text,
                         BottomBarScreen.Home
                     )
                 )
             },
-            doOnSearchTextChange = { text -> onEventSend(MainUiEvent.OnSearchQueryChange(text)) },
+            doOnSearchTextChange = { text -> onEventSend(MainUiAction.OnSearchQueryChange(text)) },
             doOnClearHistoryClick = { index ->
-                onEventSend(MainUiEvent.RemoveSearchHistory(index))
+                onEventSend(MainUiAction.RemoveSearchHistory(index))
             }
         )
     }

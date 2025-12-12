@@ -3,7 +3,6 @@ package org.example.flikrphotosearch.photo.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import flickrphotosearch.composeapp.generated.resources.Res
-import flickrphotosearch.composeapp.generated.resources.main_view_model_empty_text_error_toast_text
 import flickrphotosearch.composeapp.generated.resources.main_view_model_search_failed_error_title
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,42 +25,42 @@ class MainViewModel(
     private val _effect = Channel<MainUiEffect>(capacity = 32)
     val effect = _effect.receiveAsFlow()
 
-    private val _event: MutableSharedFlow<MainUiEvent> = MutableSharedFlow()
+    private val _action: MutableSharedFlow<MainUiAction> = MutableSharedFlow(extraBufferCapacity = 3)
 
     private val _homeUiState: MutableStateFlow<MainUiState> = MutableStateFlow(MainUiState())
 
     val viewState = _homeUiState.asStateFlow()
 
-    fun setEvent(event: MainUiEvent) {
+    fun setAction(event: MainUiAction) {
         viewModelScope.launch {
-            _event.emit(event)
+            _action.emit(event)
         }
     }
 
     init {
         viewModelScope.launch {
-            _event.collect(::handleEvent)
+            _action.collect(::handleAction)
         }
     }
 
-    private fun handleEvent(event: MainUiEvent) {
+    private fun handleAction(event: MainUiAction) {
         when (event) {
-            is MainUiEvent.RequestSearch -> doOnSearchRequest(event)
-            is MainUiEvent.OnNavigateBackRequest -> setEffect { MainUiEffect.Navigation.Pop(event.fromScreen) }
-            is MainUiEvent.OnSearchQueryChange -> _homeUiState.update {
+            is MainUiAction.RequestSearch -> doOnSearchRequest(event)
+            is MainUiAction.OnNavigateBackRequest -> setEffect { MainUiEffect.Navigation.Pop(event.fromScreen) }
+            is MainUiAction.OnSearchQueryChange -> _homeUiState.update {
                 it.copy(
                     error = null,
                     searchQuery = event.query
                 )
             }
 
-            MainUiEvent.ClearSearchHistory -> _homeUiState.update {
+            MainUiAction.ClearSearchHistory -> _homeUiState.update {
                 it.copy(
                     searchHistory = emptyList()
                 )
             }
 
-            is MainUiEvent.RemoveSearchHistory -> {
+            is MainUiAction.RemoveSearchHistory -> {
                 _homeUiState.update {
                     it.copy(
                         searchHistory = it.searchHistory.filterIndexed { index, _ -> index != event.index }
@@ -69,7 +68,7 @@ class MainViewModel(
                 }
             }
 
-            is MainUiEvent.OnSearchHistoryItemSelected -> {
+            is MainUiAction.OnSearchHistoryItemSelected -> {
                 if (event.fromScreen != BottomBarScreen.Search) {
                     switchToSearchScreen()
                 }
@@ -85,7 +84,7 @@ class MainViewModel(
         }
     }
 
-    private fun doOnSearchRequest(event: MainUiEvent.RequestSearch) {
+    private fun doOnSearchRequest(event: MainUiAction.RequestSearch) {
         if (event.searchQuery.isEmpty() || event.searchQuery.isBlank()) {
             //setEffect {
                 //MainUiEffect.ShowError(Res.string.main_view_model_empty_text_error_toast_text)

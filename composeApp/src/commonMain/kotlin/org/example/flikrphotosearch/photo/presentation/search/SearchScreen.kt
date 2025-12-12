@@ -49,7 +49,7 @@ import org.example.flikrphotosearch.core.presentation.content.ContentScreen
 import org.example.flikrphotosearch.core.presentation.content.ContentTitle
 import org.example.flikrphotosearch.core.presentation.keyboardAsState
 import org.example.flikrphotosearch.photo.domain.Photo
-import org.example.flikrphotosearch.photo.presentation.MainUiEvent
+import org.example.flikrphotosearch.photo.presentation.MainUiAction
 import org.example.flikrphotosearch.photo.presentation.MainUiState
 import org.example.flikrphotosearch.photo.presentation.MainViewModel
 import org.example.flikrphotosearch.photo.presentation.components.ImageOverlayView
@@ -82,7 +82,7 @@ internal fun SearchScreen(
             errorConfig = mainViewState.error,
             searchHistory = mainViewState.searchHistory,
             searchUiState = searchViewState,
-            onMainUiEventSend = { mainViewModel.setEvent(it) },
+            onMainUiEventSend = { mainViewModel.setAction(it) },
             onSearchUiEventSend = { searchViewModel.setEvent(it) },
             paddingValues = paddingValues
         )
@@ -92,8 +92,8 @@ internal fun SearchScreen(
 @Composable
 private fun Content(
     searchUiState: SearchUiState,
-    onMainUiEventSend: (MainUiEvent) -> Unit,
-    onSearchUiEventSend: (SearchUiEvent) -> Unit,
+    onMainUiEventSend: (MainUiAction) -> Unit,
+    onSearchUiEventSend: (SearchUiAction) -> Unit,
     paddingValues: PaddingValues,
     photoList: List<Photo>,
     lastSearch: String,
@@ -153,7 +153,7 @@ private fun Content(
                         searchErrorReceived = hasError,
                         doOnSearchRequest = { text ->
                             onMainUiEventSend(
-                                MainUiEvent.RequestSearch(
+                                MainUiAction.RequestSearch(
                                     searchQuery = text,
                                     BottomBarScreen.Search
                                 )
@@ -161,7 +161,7 @@ private fun Content(
                         },
                         doOnSearchHistoryDropDownItemClick = { text ->
                             onMainUiEventSend(
-                                MainUiEvent.OnSearchHistoryItemSelected(
+                                MainUiAction.OnSearchHistoryItemSelected(
                                     searchQuery = text,
                                     BottomBarScreen.Home
                                 )
@@ -169,13 +169,13 @@ private fun Content(
                         },
                         doOnSearchTextChange = { text ->
                             onMainUiEventSend(
-                                MainUiEvent.OnSearchQueryChange(
+                                MainUiAction.OnSearchQueryChange(
                                     text
                                 )
                             )
                         },
                         doOnClearHistoryClick = { index ->
-                            onMainUiEventSend(MainUiEvent.RemoveSearchHistory(index))
+                            onMainUiEventSend(MainUiAction.RemoveSearchHistory(index))
                         }
                     )
                 }
@@ -198,7 +198,7 @@ private fun Content(
                                 .fillMaxWidth(),
                             photo = photo,
                             onPhotoClick = {
-                                    onSearchUiEventSend(SearchUiEvent.OnPhotoClick(photo))
+                                    onSearchUiEventSend(SearchUiAction.OnPhotoClick(photo))
                             }
                         )
                     }
@@ -223,7 +223,7 @@ private fun Content(
                             delay(300)
                             if (!isKeyboardOpen) {
                                 onMainUiEventSend(
-                                    MainUiEvent.OnNavigateBackRequest(
+                                    MainUiAction.OnNavigateBackRequest(
                                         BottomBarScreen.Search
                                     )
                                 )
@@ -261,7 +261,7 @@ private fun Content(
             ImageOverlayView(
                 imageUrl = image.url,
                 onClose = {
-                    onSearchUiEventSend(SearchUiEvent.ClearPhotoOverlay)
+                    onSearchUiEventSend(SearchUiAction.ClearPhotoOverlay)
                 }
             )
         }

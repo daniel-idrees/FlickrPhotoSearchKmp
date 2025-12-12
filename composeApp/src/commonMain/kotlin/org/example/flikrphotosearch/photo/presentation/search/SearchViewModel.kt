@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel() : ViewModel() {
-    private val _event: MutableSharedFlow<SearchUiEvent> = MutableSharedFlow()
+    private val _event: MutableSharedFlow<SearchUiAction> = MutableSharedFlow(extraBufferCapacity = 3)
 
     private val _searchUiState: MutableStateFlow<SearchUiState> =
         MutableStateFlow(SearchUiState())
 
     val viewState = _searchUiState.asStateFlow()
 
-    fun setEvent(event: SearchUiEvent) {
+    fun setEvent(event: SearchUiAction) {
         viewModelScope.launch {
             _event.emit(event)
         }
@@ -28,9 +28,9 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
-    private fun handleEvent(event: SearchUiEvent) {
+    private fun handleEvent(event: SearchUiAction) {
         when (event) {
-            SearchUiEvent.ClearPhotoOverlay -> {
+            SearchUiAction.ClearPhotoOverlay -> {
                 _searchUiState.update {
                     it.copy(
                         overlayedPhoto = null
@@ -38,7 +38,7 @@ class SearchViewModel() : ViewModel() {
                 }
             }
 
-            is SearchUiEvent.OnPhotoClick -> {
+            is SearchUiAction.OnPhotoClick -> {
                 _searchUiState.update {
                     it.copy(
                         overlayedPhoto = event.photo

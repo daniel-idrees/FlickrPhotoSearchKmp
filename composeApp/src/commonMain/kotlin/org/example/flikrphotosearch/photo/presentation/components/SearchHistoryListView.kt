@@ -15,7 +15,7 @@ import org.example.flikrphotosearch.app.config.BottomBarScreen
 import org.example.flikrphotosearch.core.presentation.SPACING_EXTRA_SMALL
 import org.example.flikrphotosearch.core.presentation.SPACING_MEDIUM
 import org.example.flikrphotosearch.core.presentation.SPACING_SMALL
-import org.example.flikrphotosearch.photo.presentation.MainUiEvent
+import org.example.flikrphotosearch.photo.presentation.MainUiAction
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -24,7 +24,7 @@ internal fun SearchHistoryListView(
     modifier: Modifier = Modifier,
     searchHistory: List<String>,
     fromScreen: BottomBarScreen,
-    onEventSend: (MainUiEvent) -> Unit,
+    onEventSend: (MainUiAction) -> Unit,
 ) {
 
     if (searchHistory.isEmpty()) {
@@ -45,7 +45,7 @@ internal fun SearchHistoryListView(
                 .fillMaxWidth(),
             buttonText = stringResource(Res.string.search_history_clear_all_button_text),
             onClick = {
-                onEventSend(MainUiEvent.ClearSearchHistory)
+                onEventSend(MainUiAction.ClearSearchHistory)
             }
         )
 
@@ -66,13 +66,13 @@ internal fun SearchHistoryListView(
                     searchText = searchText,
                     onItemClick = {
                         onEventSend(
-                            MainUiEvent.OnSearchHistoryItemSelected(
+                            MainUiAction.OnSearchHistoryItemSelected(
                                 searchText,
                                 fromScreen
                             )
                         )
                     },
-                    onDeleteIconClick = { onEventSend(MainUiEvent.RemoveSearchHistory(index)) }
+                    onDeleteIconClick = { onEventSend(MainUiAction.RemoveSearchHistory(index)) }
                 )
             }
         }
